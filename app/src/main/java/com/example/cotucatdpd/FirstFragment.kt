@@ -1,5 +1,6 @@
 package com.example.cotucatdpd;
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -27,6 +28,8 @@ class FirstFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         binding.startGameButton2.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)

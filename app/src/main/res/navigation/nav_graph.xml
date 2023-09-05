@@ -21,23 +21,5 @@
         android:id="@+id/SecondFragment"
         android:name="com.example.cotucatdpd.SecondFragment"
         android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
-
-        <action
-            android:id="@+id/action_SecondFragment_to_thirdFragment"
-            app:destination="@id/thirdFragment"
-            app:enterAnim="@anim/nav_default_pop_enter_anim"
-            app:exitAnim="@android:anim/slide_out_right" />
-    </fragment>
-    <fragment
-        android:id="@+id/thirdFragment"
-        android:name="com.example.cotucatdpd.ThirdFragment"
-        android:label="Third Fragment"
-        tools:layout="@layout/fragment_third">
-        <action
-            android:id="@+id/action_thirdFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment"
-            app:enterAnim="@android:anim/fade_in"
-            app:exitAnim="@android:anim/slide_in_left" />
-    </fragment>
+        tools:layout="@layout/fragment_second"/>
 </navigation>
