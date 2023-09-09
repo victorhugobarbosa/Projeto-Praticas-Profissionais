@@ -20,6 +20,11 @@ namespace ApiProjeto.Data
 
         public DbSet<Player>? Player {get; set;}
         public DbSet<Rodadas>? Rodadas {get; set;}
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.HasDefaultSchema("praticas3");
+        }
     }
 
 

@@ -15,25 +15,25 @@ select * from Rodadas
 select * from Player
 
 /*100 waves insert: */
-declare @i
+declare @i integer;
 set @i = 1;
-declare @value
-set @value = 10
+declare @value integer;
+set @value = 10;
 
 while @i <= 100
 begin
 	if @i % 2 != 0
 	begin
-		@value += 3;
-		insert into Rodadas values (@i, @value);
+		set @value += 3;
+		insert into praticas3.Rodadas values (@i, @value);
 	end;
 	else
 		begin
-		@value += 2;
-		insert into Rodadas values (@i, @value);
+		set @value += 2;
+		insert into praticas3.Rodadas values (@i, @value);
 	end;
 
-	@i += 1;
+	set @i += 1;
 end;
 
 
