@@ -49,7 +49,7 @@ namespace ApiProjeto.Controllers
             catch{
                 return this.StatusCode(
                     StatusCodes.Status500InternalServerError,
-                    "Falha no acesso ao banco de dados"
+                    "Falha no acesso ao banco de dados."
                 );
             }
             return BadRequest();
@@ -67,7 +67,28 @@ namespace ApiProjeto.Controllers
             catch{
                 return this.StatusCode(
                     StatusCodes.Status500InternalServerError,
-                    "Falha no acesso ao banco de dados"
+                    "Falha no acesso ao banco de dados."
+                );
+            }
+        }
+
+        [HttpPut("{NomePlayer}")]
+        public async Task<IActionResult> put(string NomePlayer, Player dadosNewPlayer){
+            try{
+                var res = await _context.Player.FindAsync(NomePlayer);
+                if(NomePlayer != res.nome) return BadRequest();
+
+                res.nome = dadosNewPlayer.nome;
+                res.senha = dadosNewPlayer.senha;
+                res.apelido = dadosNewPlayer.apelido;
+                res.maiorRodada = dadosNewPlayer.maiorRodada;
+                await _context.SaveChangesAsync();
+                return Created($"/api/Player/{dadosNewPlayer.nome}",dadosNewPlayer);
+            }
+            catch{
+                return this.StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    "Falha no acesso ao banco de dados."
                 );
             }
         }      

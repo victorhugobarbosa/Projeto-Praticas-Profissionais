@@ -37,5 +37,41 @@ namespace ApiProjeto.Controllers
                 );
             }
         }
+
+        [HttpPut("{NumeroRodada}")]
+        public async Task<IActionResult> put(int NumeroRodada, Rodadas dadosNewRodadas){
+            try{
+                var res = await _context.Rodadas.FindAsync(NumeroRodada);
+                if(NumeroRodada != res.numeroRodadas) return BadRequest();
+
+                res.numeroRodadas = dadosNewRodadas.numeroRodadas;
+                res.qtaInimigos = dadosNewRodadas.qtaInimigos;
+                await _context.SaveChangesAsync();
+                return Created($"/api/Player/{dadosNewRodadas.numeroRodadas}",dadosNewRodadas);
+            }
+            catch{
+                return this.StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    "Falha no acesso ao banco de dados."
+                );
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> post(Rodadas model){
+            try{
+                _context.Rodadas.Add(model);
+                if(await _context.SaveChangesAsync() == 1){
+                    return Created($"/api/Player/{model.numeroRodadas}", model);
+                }
+            }
+            catch{
+                return this.StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    "Falha no acesso ao banco de dados."
+                );
+            }
+            return BadRequest();
+        }     
     }
 }
