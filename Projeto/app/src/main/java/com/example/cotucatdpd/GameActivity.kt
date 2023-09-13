@@ -24,7 +24,7 @@ class GameActivity : Activity() {
     }
 
     override fun onPause() {
-        //game.pause()
+        game.pause()
         super.onPause()
     }
 
@@ -37,6 +37,6 @@ class GameActivity : Activity() {
     }
 
     override fun onBackPressed() {
-        //super.onBackPressed();
+        super.onBackPressed();
     }
 }

@@ -1,10 +1,13 @@
-package com.example.cotucatdpd
+package com.example.cotucatdpd.gamePanel
 
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import com.example.cotucatdpd.gameObject.Circle
 
-class Joystick(centerPositionX: Int, centerPositionY: Int, outerCircleRadius: Int, innerCircleRadius: Int) {
+class Joystick(centerPositionX: Int, centerPositionY: Int, outerCircleRadius: Int, innerCircleRadius: Int) :
+    Circle(0, 0.0, 0.0, 0.0){
+
     private var outerCircleCenterX = centerPositionX
     private var outerCircleCenterY = centerPositionY
     private var innerCircleCenterX = centerPositionX
@@ -34,7 +37,7 @@ class Joystick(centerPositionX: Int, centerPositionY: Int, outerCircleRadius: In
         canvas?.drawCircle(innerCircleCenterX.toFloat(), innerCircleCenterY.toFloat(), innerCircleRadius.toFloat(), innerCirclePaint!!)
     }
 
-    fun update() {
+    override fun update() {
         updateInnerCircle()
     }
 

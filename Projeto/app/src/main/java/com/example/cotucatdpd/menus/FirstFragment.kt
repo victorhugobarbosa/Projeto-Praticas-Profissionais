@@ -1,4 +1,4 @@
-package com.example.cotucatdpd;
+package com.example.cotucatdpd.menus;
 
 import android.content.pm.ActivityInfo
 import android.os.Bundle
@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.findNavController
+import com.example.cotucatdpd.R
 
 import com.example.cotucatdpd.databinding.FragmentFirstBinding;
 

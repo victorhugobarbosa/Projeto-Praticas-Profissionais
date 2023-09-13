@@ -1,35 +1,80 @@
 package com.example.cotucatdpd
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Canvas
+import android.util.DisplayMetrics
+import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import com.example.cotucatdpd.gameObject.*
+import com.example.cotucatdpd.gamePanel.*
+import com.example.cotucatdpd.graphics.*
 
-class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback {
+class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback{
+
     private val player: Player
     private var loop: GameLoop
     private val joystick: Joystick
+    private var enemyList = mutableListOf<Enemy>()
+    private var spellList = mutableListOf<Spell>()
+    private var enemy: Enemy? = null
+    private var joystickPointerID = 0
+    private var numberOfSpellsToCast = 0
+    private var gameOver: GameOver?
+    private var gameDisplay: GameDisplay?
+    //private var spriteSheet = SpriteSheet(context)
 
     init {
-
         val surfaceHolder = holder
         surfaceHolder.addCallback(this)
 
         loop = GameLoop(this, surfaceHolder)
 
+        gameOver = GameOver(context)
         joystick = Joystick(275, 300, 70, 40)
-        player = Player(getContext(), 500.0, 500.0, 30.0)
+
+        var spriteSheet = SpriteSheet(context)
+        player = Player(getContext(), 500.0, 500.0, 30.0, joystick, spriteSheet.getPlayerSprite())
+        enemy = Enemy(getContext(), player)
+        //enemy = Enemy(getContext(), player, 0.0, 0.0, 20.0)
+
+        var displayMetrics = DisplayMetrics()
+        (context as Activity).windowManager.defaultDisplay.getMetrics(displayMetrics)
+        gameDisplay = GameDisplay(displayMetrics.widthPixels, displayMetrics.heightPixels, player)
 
         isFocusable = true
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
 
-        when(event?.action){
+        when(event?.actionMasked){
             MotionEvent.ACTION_DOWN -> {
-                if(joystick.isPressed(event.x.toDouble(), event.y.toDouble())){
+                if(joystick.getIsPressed()){
+                    numberOfSpellsToCast++
+                    //spellList.add(Spell(context, player))
+                }
+                else if(joystick.isPressed(event.x.toDouble(), event.y.toDouble())){
+                    joystickPointerID = event?.getPointerId(event!!.actionIndex)!!
                     joystick.setIsPressed(true)
+                } else {
+                    numberOfSpellsToCast++
+                    //spellList.add(Spell(context, player))
+                }
+                return true
+            }
+            MotionEvent.ACTION_POINTER_DOWN -> {
+                if(joystick.getIsPressed()){
+                    numberOfSpellsToCast++
+                    //spellList.add(Spell(context, player))
+                }
+                else if(joystick.isPressed(event.x.toDouble(), event.y.toDouble())){
+                    joystickPointerID = event?.getPointerId(event!!.actionIndex)!!
+                    joystick.setIsPressed(true)
+                } else {
+                    numberOfSpellsToCast++
+                    //spellList.add(Spell(context, player))
                 }
                 return true
             }
@@ -40,8 +85,10 @@ class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback {
                 return true
             }
             MotionEvent.ACTION_UP -> {
-                joystick.setIsPressed(false)
-                joystick.resetActuator()
+                if(joystickPointerID == event?.getPointerId(event!!.actionIndex)){
+                    joystick.setIsPressed(false)
+                    joystick.resetActuator()
+                }
                 return true
             }
         }
@@ -65,10 +112,76 @@ class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback {
         super.draw(canvas)
 
         joystick.draw(canvas)
-        player.draw(canvas)
+        player.draw(canvas, gameDisplay!!)
+        for(e in enemyList){
+            e.draw(canvas, gameDisplay!!)
+        }
+        for(s in spellList){
+            s.draw(canvas, gameDisplay!!)
+        }
+
+        if(player.getHealthPoints() <= 0){
+            gameOver!!.draw(canvas)
+        }
+        rotateCanvas(canvas)
     }
+
     fun update(){
+
+        if(player.getHealthPoints() <= 0)
+            return
+
         joystick.update()
-        player.update(joystick)
+        player.update()
+
+        // Spawn enemy
+        if (enemy!!.readyToSpawn()) {
+            enemyList.add(enemy!!)
+            enemy = Enemy(getContext(), player)
+        }
+        while(numberOfSpellsToCast > 0){
+            spellList.add(Spell(context, player))
+            numberOfSpellsToCast--
+        }
+
+        for (e in enemyList){
+            e.update()
+        }
+        for(s in spellList){
+            s.update()
+        }
+
+        var iteratorE = enemyList.iterator()
+        var e = Enemy(context, player)
+        while(iteratorE.hasNext()){
+            var enemy = iteratorE.next()
+            if(e.isColliding(enemy, player)){
+                iteratorE.remove()
+                player.setHealthPoints(player.getHealthPoints()-10)
+                continue
+            }
+            var iteratorS = spellList.iterator()
+            while(iteratorS.hasNext())
+            {
+                var spell = iteratorS.next()
+                if(e.isColliding(spell, enemy)) {
+                    iteratorE.remove()
+                    iteratorS.remove()
+                    break
+                }
+            }
+        }
+        gameDisplay!!.update()
+    }
+
+    fun rotateCanvas(canvas: Canvas?){
+        var angleInRads = Math.atan2(joystick.getActuatorY()!!, joystick.getActuatorX()!!)
+        var angleInDeg = angleInRads * 57
+
+        canvas!!.rotate(angleInDeg.toFloat())
+    }
+
+    fun pause(){
+        loop.stopLoop()
     }
 }

@@ -1,4 +1,4 @@
-package com.example.cotucatdpd
+package com.example.cotucatdpd.menus
 
 import android.os.Bundle
 import android.view.View
