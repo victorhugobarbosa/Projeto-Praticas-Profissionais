@@ -1,5 +1,6 @@
 package com.example.cotucatdpd
 
+import android.animation.Animator
 import android.app.Activity
 import android.content.Context
 import android.graphics.Canvas
@@ -36,7 +37,8 @@ class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback{
         joystick = Joystick(275, 300, 70, 40)
 
         var spriteSheet = SpriteSheet(context)
-        player = Player(getContext(), 500.0, 500.0, 30.0, joystick, spriteSheet.getPlayerSprite())
+        var animator = Animator(spriteSheet.getPlayerSpriteArray())
+        player = Player(getContext(), 500.0, 500.0, 30.0, joystick, animator)
         enemy = Enemy(getContext(), player)
         //enemy = Enemy(getContext(), player, 0.0, 0.0, 20.0)
 
