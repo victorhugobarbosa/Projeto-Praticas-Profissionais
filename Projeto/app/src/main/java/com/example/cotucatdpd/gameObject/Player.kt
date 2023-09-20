@@ -9,7 +9,7 @@ import com.example.cotucatdpd.R
 import com.example.cotucatdpd.gamePanel.*
 import com.example.cotucatdpd.graphics.Sprite
 
-    class Player(context: Context?, positionX: Double, positionY: Double, radius: Double, joystick: Joystick, animator: Animator)
+class Player(context: Context?, positionX: Double, positionY: Double, radius: Double, joystick: Joystick, sprite: Sprite)
     : Circle(ContextCompat.getColor(context!!, R.color.player), positionX, positionY, radius) {
 
     val SPEED_PIXELS_PER_SECOND = 400.0
@@ -18,7 +18,7 @@ import com.example.cotucatdpd.graphics.Sprite
     private var joystick = joystick
     private var healthBar = HealthBar(this, context)
     private var healthPoints = MAX_HEALTH_POINTS
-    private var animator = animator
+    private var sprite = sprite
 
     override fun update(){
         velocityX = joystick.getActuatorX()!! *MAX_SPEED
@@ -45,7 +45,9 @@ import com.example.cotucatdpd.graphics.Sprite
     }
 
     override fun draw(canvas: Canvas?, gameDisplay: GameDisplay){
-        animator.draw(canvas, gameDisplay, this)
+        sprite!!.draw(canvas,
+                    gameDisplay.gameToDisplayX(getPositionX()) - sprite.getWidth()/2,
+                    gameDisplay.gameToDisplayY(getPositionY()) - sprite.getHeight()/2)
         healthBar.draw(canvas, gameDisplay)
     }
 }

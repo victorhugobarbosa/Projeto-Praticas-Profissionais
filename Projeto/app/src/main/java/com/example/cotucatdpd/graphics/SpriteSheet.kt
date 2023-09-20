@@ -15,13 +15,8 @@ class SpriteSheet(context: Context?) {
         bitmap = BitmapFactory.decodeResource(context!!.resources, R.drawable.personagem_pd, bitmapOptions)
     }
 
-    fun getPlayerSpriteArray() : ArrayList<Sprite>{
-        var spriteList = arrayListOf<Sprite>()
-        spriteList[0] = Sprite(this, Rect(0*64, 0, 1*64, 64))
-        spriteList[1] = Sprite(this, Rect(1*64, 0, 2*64, 64))
-        spriteList[2] = Sprite(this, Rect(2*64, 0, 3*64, 64))
-
-        return spriteList
+    fun getPlayerSprite() : Sprite{
+        return Sprite(this, Rect(0, 0, 320, 320))
     }
 
     fun getBitmap(): Bitmap? {
