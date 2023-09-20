@@ -7,7 +7,6 @@ import com.example.cotucatdpd.GameDisplay
 import com.example.cotucatdpd.GameLoop
 import com.example.cotucatdpd.R
 import com.example.cotucatdpd.gamePanel.*
-import com.example.cotucatdpd.graphics.Animator
 import com.example.cotucatdpd.graphics.Sprite
 
     class Player(context: Context?, positionX: Double, positionY: Double, radius: Double, joystick: Joystick, animator: Animator)
@@ -20,7 +19,6 @@ import com.example.cotucatdpd.graphics.Sprite
     private var healthBar = HealthBar(this, context)
     private var healthPoints = MAX_HEALTH_POINTS
     private var animator = animator
-    private var state = PlayerState(this)
 
     override fun update(){
         velocityX = joystick.getActuatorX()!! *MAX_SPEED
@@ -36,8 +34,6 @@ import com.example.cotucatdpd.graphics.Sprite
             directionX = velocityX!! / distance
             directionY = velocityY!! / distance
         }
-
-        state.update()
     }
 
     fun getHealthPoints() : Int{
@@ -46,9 +42,6 @@ import com.example.cotucatdpd.graphics.Sprite
     fun setHealthPoints(newHp: Int){
         if(newHp >= 0 )
             healthPoints = newHp
-    }
-    fun getState() : PlayerState{
-        return state
     }
 
     override fun draw(canvas: Canvas?, gameDisplay: GameDisplay){
