@@ -2,7 +2,7 @@ package com.example.cotucatdpd.gameObject
 
 class PlayerState(player: Player) {
 
-    enum class State{
+    public enum class State{
         NOT_MOVING,
         STARTED_MOVING,
         IS_MOVING
