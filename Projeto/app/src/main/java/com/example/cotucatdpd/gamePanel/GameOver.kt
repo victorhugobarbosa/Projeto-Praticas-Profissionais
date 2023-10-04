@@ -11,7 +11,7 @@ class GameOver(context: Context?) {
     private var context = context
 
     fun draw(canvas: Canvas?){
-        var text = "Tu é um fudido"
+        var text = "Morreu"
 
         var x = 800.0
         var y = 200.0

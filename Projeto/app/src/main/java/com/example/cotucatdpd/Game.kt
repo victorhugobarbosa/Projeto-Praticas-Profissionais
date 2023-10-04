@@ -33,15 +33,19 @@ class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback{
         loop = GameLoop(this, surfaceHolder)
 
         gameOver = GameOver(context)
-        joystick = Joystick(275, 300, 70, 40)
+
+        var displayMetrics = DisplayMetrics()
+        (context as Activity).windowManager.defaultDisplay.getMetrics(displayMetrics)
+
+        var outerRadius = Math.sqrt((displayMetrics.widthPixels + displayMetrics.heightPixels).toDouble())+30
+        var innerRadius = (Math.sqrt((displayMetrics.widthPixels + displayMetrics.heightPixels).toDouble())+30)/2
+        joystick = Joystick(displayMetrics.widthPixels/8, displayMetrics.heightPixels/2, outerRadius.toInt(), innerRadius.toInt())
 
         var spriteSheet = SpriteSheet(context)
         player = Player(getContext(), 500.0, 500.0, 30.0, joystick, spriteSheet.getPlayerSprite())
         enemy = Enemy(getContext(), player)
         //enemy = Enemy(getContext(), player, 0.0, 0.0, 20.0)
 
-        var displayMetrics = DisplayMetrics()
-        (context as Activity).windowManager.defaultDisplay.getMetrics(displayMetrics)
         gameDisplay = GameDisplay(displayMetrics.widthPixels, displayMetrics.heightPixels, player)
 
         isFocusable = true
@@ -157,7 +161,7 @@ class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback{
             var enemy = iteratorE.next()
             if(e.isColliding(enemy, player)){
                 iteratorE.remove()
-                player.setHealthPoints(player.getHealthPoints()-10)
+                player.setHealthPoints(player.getHealthPoints()-25)
                 continue
             }
             var iteratorS = spellList.iterator()

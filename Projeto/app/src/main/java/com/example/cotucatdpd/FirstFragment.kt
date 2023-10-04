@@ -1,18 +1,19 @@
-package com.example.cotucatdpd.menus;
+package com.example.cotucatdpd;
 
-import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment;
-import com.example.cotucatdpd.GameActivity
-import com.example.cotucatdpd.databinding.FragmentSecondBinding
+import androidx.navigation.fragment.findNavController
+import com.example.cotucatdpd.R
 
-class SecondFragment : Fragment() {
+import com.example.cotucatdpd.databinding.FragmentFirstBinding;
 
-    private var _binding: FragmentSecondBinding? = null
+class FirstFragment : Fragment() {
+
+    private var _binding: FragmentFirstBinding? = null
 
     private val binding get() = _binding!!
 
@@ -21,7 +22,7 @@ class SecondFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        _binding = FragmentSecondBinding.inflate(inflater, container, false)
+        _binding = FragmentFirstBinding.inflate(inflater, container, false)
         return binding.root
 
     }
@@ -31,10 +32,8 @@ class SecondFragment : Fragment() {
 
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
-        binding.btnPD.setOnClickListener {
-            val intent = Intent(context, GameActivity::class.java)
-            startActivity(intent)
-            activity?.finish()
+        binding.startGameButton2.setOnClickListener {
+            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
         }
     }
 

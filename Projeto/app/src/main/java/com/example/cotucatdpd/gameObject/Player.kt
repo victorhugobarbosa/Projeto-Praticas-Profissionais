@@ -21,7 +21,7 @@ class Player(context: Context?, positionX: Double, positionY: Double, radius: Do
     private var sprite = sprite
 
     override fun update(){
-        velocityX = joystick.getActuatorX()!! *MAX_SPEED
+        velocityX = joystick.getActuatorX()!!*MAX_SPEED
         velocityY = joystick.getActuatorY()!!*MAX_SPEED
 
         positionX += velocityX!!
@@ -46,8 +46,8 @@ class Player(context: Context?, positionX: Double, positionY: Double, radius: Do
 
     override fun draw(canvas: Canvas?, gameDisplay: GameDisplay){
         sprite!!.draw(canvas,
-                    gameDisplay.gameToDisplayX(getPositionX()) - sprite.getWidth()/2,
-                    gameDisplay.gameToDisplayY(getPositionY()) - sprite.getHeight()/2)
+                    gameDisplay.gameToDisplayX(getPositionX()) - sprite.getWidth()/8,
+                    gameDisplay.gameToDisplayY(getPositionY()) - sprite.getHeight()/8)
         healthBar.draw(canvas, gameDisplay)
     }
 }
