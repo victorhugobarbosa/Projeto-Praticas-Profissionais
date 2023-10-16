@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.Canvas
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
@@ -34,15 +33,16 @@ class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback{
 
         gameOver = GameOver(context)
 
-        var displayMetrics = DisplayMetrics()
+        val displayMetrics = DisplayMetrics()
         (context as Activity).windowManager.defaultDisplay.getMetrics(displayMetrics)
 
-        var outerRadius = Math.sqrt((displayMetrics.widthPixels + displayMetrics.heightPixels).toDouble())+30
-        var innerRadius = (Math.sqrt((displayMetrics.widthPixels + displayMetrics.heightPixels).toDouble())+30)/2
+        val outerRadius = Math.sqrt((displayMetrics.widthPixels + displayMetrics.heightPixels).toDouble())+30
+        val innerRadius = (Math.sqrt((displayMetrics.widthPixels + displayMetrics.heightPixels).toDouble())+30)/2
         joystick = Joystick(displayMetrics.widthPixels/8, displayMetrics.heightPixels/2, outerRadius.toInt(), innerRadius.toInt())
 
-        var spriteSheet = SpriteSheet(context)
-        player = Player(getContext(), 500.0, 500.0, 30.0, joystick, spriteSheet.getPlayerSprite())
+        val spriteSheet = SpriteSheet(context)
+        val animator = Animator(spriteSheet.getPlayerSpriteArray())
+        player = Player(getContext(), 500.0, 500.0, 30.0, joystick, animator)
         enemy = Enemy(getContext(), player)
         //enemy = Enemy(getContext(), player, 0.0, 0.0, 20.0)
 
@@ -60,7 +60,7 @@ class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback{
                     //spellList.add(Spell(context, player))
                 }
                 else if(joystick.isPressed(event.x.toDouble(), event.y.toDouble())){
-                    joystickPointerID = event?.getPointerId(event!!.actionIndex)!!
+                    joystickPointerID = event.getPointerId(event.actionIndex)
                     joystick.setIsPressed(true)
                 } else {
                     numberOfSpellsToCast++
@@ -74,7 +74,7 @@ class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback{
                     //spellList.add(Spell(context, player))
                 }
                 else if(joystick.isPressed(event.x.toDouble(), event.y.toDouble())){
-                    joystickPointerID = event?.getPointerId(event!!.actionIndex)!!
+                    joystickPointerID = event.getPointerId(event.actionIndex)
                     joystick.setIsPressed(true)
                 } else {
                     numberOfSpellsToCast++
@@ -89,7 +89,7 @@ class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback{
                 return true
             }
             MotionEvent.ACTION_UP -> {
-                if(joystickPointerID == event?.getPointerId(event!!.actionIndex)){
+                if(joystickPointerID == event.getPointerId(event.actionIndex)){
                     joystick.setIsPressed(false)
                     joystick.resetActuator()
                 }
@@ -101,7 +101,7 @@ class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback{
 
     override fun surfaceCreated(surfaceHolder: SurfaceHolder) {
         if (loop.getState().equals(Thread.State.TERMINATED)) {
-            var surfHolder = holder
+            val surfHolder = holder
             surfHolder.addCallback(this)
             loop = GameLoop(this, surfHolder)
         }

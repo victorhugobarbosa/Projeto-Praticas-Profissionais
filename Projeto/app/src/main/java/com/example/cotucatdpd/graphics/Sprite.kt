@@ -9,7 +9,7 @@ class Sprite(spriteSheet: SpriteSheet, rect: Rect) {
     private val rect = rect
 
     fun draw(canvas: Canvas?, x: Float, y: Float) {
-        canvas!!.drawBitmap(spriteSheet.getBitmap()!!, rect, Rect(x.toInt(), y.toInt(), (x+320).toInt(), (y+320).toInt()), null)
+        canvas!!.drawBitmap(spriteSheet.getBitmap()!!, rect, Rect(x.toInt()-24, y.toInt(), (x+40).toInt(), (y+64).toInt()), null)
     }
 
     fun getHeight() : Int{

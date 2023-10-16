@@ -7,9 +7,9 @@ import com.example.cotucatdpd.GameDisplay
 import com.example.cotucatdpd.GameLoop
 import com.example.cotucatdpd.R
 import com.example.cotucatdpd.gamePanel.*
-import com.example.cotucatdpd.graphics.Sprite
+import com.example.cotucatdpd.graphics.Animator
 
-class Player(context: Context?, positionX: Double, positionY: Double, radius: Double, joystick: Joystick, sprite: Sprite)
+class Player(context: Context?, positionX: Double, positionY: Double, radius: Double, joystick: Joystick, animator: Animator)
     : Circle(ContextCompat.getColor(context!!, R.color.player), positionX, positionY, radius) {
 
     val SPEED_PIXELS_PER_SECOND = 400.0
@@ -18,7 +18,8 @@ class Player(context: Context?, positionX: Double, positionY: Double, radius: Do
     private var joystick = joystick
     private var healthBar = HealthBar(this, context)
     private var healthPoints = MAX_HEALTH_POINTS
-    private var sprite = sprite
+    private var animator = animator
+    private var playerState = PlayerState(this)
 
     override fun update(){
         velocityX = joystick.getActuatorX()!!*MAX_SPEED
@@ -34,6 +35,8 @@ class Player(context: Context?, positionX: Double, positionY: Double, radius: Do
             directionX = velocityX!! / distance
             directionY = velocityY!! / distance
         }
+
+        playerState.update()
     }
 
     fun getHealthPoints() : Int{
@@ -44,10 +47,12 @@ class Player(context: Context?, positionX: Double, positionY: Double, radius: Do
             healthPoints = newHp
     }
 
+    fun getPlayerState() : PlayerState {
+        return playerState
+    }
+
     override fun draw(canvas: Canvas?, gameDisplay: GameDisplay){
-        sprite!!.draw(canvas,
-                    gameDisplay.gameToDisplayX(getPositionX()) - sprite.getWidth()/8,
-                    gameDisplay.gameToDisplayY(getPositionY()) - sprite.getHeight()/8)
+        animator.draw(canvas, gameDisplay, this)
         healthBar.draw(canvas, gameDisplay)
     }
 }
