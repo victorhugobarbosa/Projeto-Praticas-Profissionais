@@ -45,7 +45,7 @@ async function getTimeStamp(nickname){
 
 (function(){
     async function new_player(nickname, senha, email) {
-        if (email.trim() == "" /*|| !email.include('@') || !email.include('.')*/) return { success: false, message: 'Invalid params' };
+        if (email.trim() == "" || email.indexOf('@') == -1 || email.indexOf('.') == -1) return { success: false, message: 'Invalid params' };
     
         const playerExists = await exists_player(nickname);
         if (playerExists) {
@@ -158,5 +158,4 @@ async function getTimeStamp(nickname){
     player_database.update = update_player;
     player_database.getAll = getAll_players;
     player_database.getPlayer = getPlayer; 
-    player_database.getTimeStamp = getTimeStamp;
 })()
