@@ -1,7 +1,8 @@
 const player_database = {};
+const playerRef = firebase.database().ref('/Players');
 
-function exists_player(nome) {
-    const player_ref = firebase.database().ref('/Player/' + nome);
+function exists_player(nickname) {
+    let player_ref = firebase.database().ref('/Player/' + nickname);
 
     return player_ref.once('value')
         .then(function(snapshot) {
@@ -17,25 +18,50 @@ function exists_player(nome) {
         });
 }
 
+async function getTimeStamp(nickname){
+    if (nickname === "") {
+        return { success: false, message: 'Invalid player nickname' };
+    }
+
+    try {
+        const playerRef = firebase.database().ref('/Player/' + nickname);
+        const snapshot = await playerRef.once('value');
+        
+        if (snapshot.exists()) {
+            const playerData = snapshot.val();
+            if (playerData && playerData.createdat) {
+                console.log(playerData.createdat);
+                return { success: true, timestamp: playerData.createdat };
+            } else {
+                return { success: false, message: 'Timestamp not found' };
+            }
+        } else {
+            return { success: false, message: 'Player not found' };
+        }
+    } catch (error) {
+        return { success: false, message: `Error getting timestamp: ${error.message}` };
+    }
+}
+
 (function(){
-    async function new_player(nome, senha, apelido) {
-        if (nome.trim() == "" || apelido.trim() == "") return { success: false, message: 'Invalid params' };
+    async function new_player(nickname, senha, email) {
+        if (email.trim() == "" /*|| !email.include('@') || !email.include('.')*/) return { success: false, message: 'Invalid params' };
     
-        const playerExists = await exists_player(nome);
+        const playerExists = await exists_player(nickname);
         if (playerExists) {
             return { success: false, message: 'Player already exists' };
         }
     
         const player_data = {
-            nome: nome,
+            email: email,
             senha: senha,
-            apelido: apelido,
+            nickname: nickname,
             maiorRodada: 0,
             createdat: firebase.database.ServerValue.TIMESTAMP,
         };
     
         let updates = {};
-        updates['/Player/' + nome] = player_data;
+        updates['/Player/' + nickname] = player_data;
     
         let player_ref = firebase.database().ref();
     
@@ -47,11 +73,11 @@ function exists_player(nome) {
         }
     }
 
-    async function remove_player(nome) {
-        const playerExists = await exists_player(nome);
-        if(nome.trim() == "" || !playerExists) return {success: false, message: 'Invalid player'};
+    async function remove_player(nickname) {
+        const playerExists = await exists_player(nickname);
+        if(nickname.trim() == "" || !playerExists) return {success: false, message: `Remove failed: ${error.message}`};
 
-        let player_ref = firebase.database().ref('/Player/' + nome);
+        let player_ref = firebase.database().ref('/Player/' + nickname);
 
         player_ref.remove()
         .then(function(){
@@ -62,20 +88,21 @@ function exists_player(nome) {
         });
     }
 
-    async function update_player(nome, senha, apelido, maiorRodada) {
-        const playerExists = await exists_player(nome);
-        if(nome.trim() == "" || !playerExists) return {success: false, message: 'Invalid player'};
+    async function update_player(nickname, senha, email, maiorRodada) {
+        const playerExists = await exists_player(nickname);
+        if(nickname.trim() == "" || !playerExists) return {success: false, message: 'Invalid player'};
 
+        let playerCreatedat = getTimeStamp(nickname);
         const player_data = {
-            nome: nome,
+            email: email,
             senha: senha,
-            apelido: apelido,
+            nickname: nickname,
             maiorRodada: maiorRodada,
-            createdat: firebase.database.ServerValue.TIMESTAMP,
+            createdat: (await playerCreatedat).timestamp,
         };
 
         let updates = {};
-        updates['/Player/' + nome] = player_data;
+        updates['/Player/' + nickname] = player_data;
 
         let player_ref = firebase.database().ref();
 
@@ -89,7 +116,7 @@ function exists_player(nome) {
     }
 
     async function getAll_players(){
-        const playerRef = firebase.database().ref('/Player');
+        let playerRef = firebase.database().ref('/Player');
     
         return playerRef.once('value')
             .then(function(snapshot) {
@@ -103,12 +130,12 @@ function exists_player(nome) {
             });
     }
 
-    async function getPlayer(nome){
-        if (nome === "") {
-        return Promise.resolve({ success: false, message: 'Invalid player name' });
+    async function getPlayer(nickname){
+        if (nickname === "") {
+        return Promise.resolve({ success: false, message: 'Invalid player nickname' });
     }
 
-    const playerRef = firebase.database().ref('/Player/' + nome);
+    let playerRef = firebase.database().ref('/Player/' + nickname);
 
     return playerRef.once('value')
         .then(function(snapshot) {
@@ -131,4 +158,5 @@ function exists_player(nome) {
     player_database.update = update_player;
     player_database.getAll = getAll_players;
     player_database.getPlayer = getPlayer; 
+    player_database.getTimeStamp = getTimeStamp;
 })()
