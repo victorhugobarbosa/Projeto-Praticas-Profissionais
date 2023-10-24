@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import com.android.volley.Request
@@ -17,48 +18,51 @@ class Cadastro : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cadastro)
+
+        Toast.makeText(applicationContext,"Seja bem-vindo!",Toast.LENGTH_SHORT).show()
     }
 
     fun register(view: View){
-        val emailView = findViewById<TextView>(R.id.txtEmail);
-        val nicknameView = findViewById<TextView>(R.id.txtNicknameCadastro);
-        val senhaView = findViewById<TextView>(R.id.txtSenhaCadastro);
-        val confirmarSenhaView = findViewById<TextView>(R.id.txtConfirmarSenha);
+        val emailText = findViewById<EditText>(R.id.txtEmail);
+        val nicknameText = findViewById<EditText>(R.id.txtNicknameCadastro);
+        val senhaText= findViewById<EditText>(R.id.txtSenhaCadastro);
+        val confirmarSenhaText = findViewById<EditText>(R.id.txtConfirmarSenha);
 
-        val email = emailView.text.toString().trim();
-        val nickname = nicknameView.text.toString().trim();
-        val senha = senhaView.text.toString().trim();
-        val confirmarSenha = confirmarSenhaView.text.toString().trim();
+        val email = emailText.text.toString().trim();
+        val nickname = nicknameText.text.toString().trim();
+        val senha = senhaText.text.toString().trim();
+        val confirmarSenha = confirmarSenhaText.text.toString().trim();
 
         if (email.isEmpty() || nickname.isEmpty() || senha.isEmpty() || confirmarSenha.isEmpty()) {
-            Toast.makeText(applicationContext,"Por favor, preencha todos os campos",Toast.LENGTH_SHORT)
+            Toast.makeText(applicationContext,"Por favor, preencha todos os campos",Toast.LENGTH_SHORT).show()
             return
         }
-        else if(confirmarSenha != senha){
-            Toast.makeText(applicationContext,"Insira a senha correta",Toast.LENGTH_SHORT)
+        if(confirmarSenha != senha){
+            Toast.makeText(applicationContext,"Insira a senha correta",Toast.LENGTH_SHORT).show()
             return
         }
 
         val player = JSONObject();
         player.put("email", email);
-        player.put("nickname", nickname);
-        player.put("senha", senha)
         player.put("maiorRodada", 0);
+        player.put("senha", senha);
 
         val queue = Volley.newRequestQueue(this)
         val url = "http://192.168.180.209:3000/test"
 
-        val jsonRequest = JsonObjectRequest(
+        Toast.makeText(applicationContext,"Cadastrando: ${player}",Toast.LENGTH_SHORT).show();
+
+        val jsonObjectRequest = JsonObjectRequest(
             Request.Method.POST, url, player,
             { reponse ->
-                val loginPage = Intent(this, Login::class.java)
+                val loginPage = Intent(this, Login::class.java);
                 startActivity(loginPage);
             },
             { error ->
-                Toast.makeText(applicationContext,"Falha ao cadastrar: ${error.message}",Toast.LENGTH_SHORT)
+                Toast.makeText(applicationContext,"Falha ao cadastrar: ${error.message}",Toast.LENGTH_SHORT).show()
             }
         )
-        queue.add(jsonRequest)
+        queue.add(jsonObjectRequest)
     }
 
 }
