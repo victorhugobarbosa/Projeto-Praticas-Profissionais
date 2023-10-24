@@ -36,21 +36,21 @@ const validatePlayer = (player) => {
 };
 const validateRodada = (rodada) => {
     try {
-        if (!rodada.descanso || !rodada.descricao || !rodada.nome || !rodada.quant || !rodada.treino || !rodada.id) {
+        if (!rodada.id || !rodada.enemies) {
             return false;
         }
-        return rodada.id >= 0 &&
-            rodada.enimes >= 13 && rodada.descricao.length <= 300;
+        return rodada.id >= 1 &&
+            rodada.enemies >= 13 && rodada.descricao.length <= 300;
     } catch (error) {
         console.error('Error validating rodada: ', error);
         return false;
     }
 };
 
-const existsPlayer = async (id) => {
+const existsPlayer = async (nickname) => {
     try {
         const data = await getDocs(players);
-        return data.docs.some((doc) => doc.data().id === id);
+        return data.docs.some((doc) => doc.data().nickname === nickname);
     } catch (error) {
         console.error('Error checking if player exists: ', error);
         return false;
@@ -66,8 +66,13 @@ const existsEmail = async (email) => {
     }
 };
 const existisRodada = async (id) => {
-    const rodadaSnapshot = await getDocs(query(collection(db, 'Rodada'), where('id', '==', id)));
-    return !rodadaSnapshot.empty;
+    try {
+        const data = await getDocs(rodadas);
+        return data.docs.some((doc) => doc.data().id === id);
+    } catch (error) {
+        console.error('Error checking if rodada exists: ', error);
+        return false;
+    }
 };
 
 const handleResponse = (res, status, message) => {
@@ -152,18 +157,18 @@ app.get('/rodadas/:id', async (req, res) => {
 });
 
 /*---------------- POST ------------------*/
+const addRodada = async (id, enemies) => {
+    await setDoc(doc(rodadas, id), {
+        enemies: enemies,
+        id: id
+    });
+}
 const addPlayer = async (nickname, email, senha, maiorRodada) => {
     await setDoc(doc(players, nickname), {
         email: email,
         maiorRodada: maiorRodada,
         nickname: nickname,
         senha: senha
-    });
-}
-const addRodada = async (id, enemies) => {
-    await setDoc(doc(rodadas, id), {
-        enemies: enemies,
-        id: id
     });
 }
 
