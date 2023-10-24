@@ -19,7 +19,7 @@ const firebase = initializeApp(firebaseConfig);
 const db = getFirestore(firebase);
 
 const players = collection(db, 'Player');
-const rodadas = collection(db, 'Rodadas');
+const rodadas = collection(db, 'Rodada');
 
 const validatePlayer = (player) => {
     try {
@@ -66,7 +66,7 @@ const existsEmail = async (email) => {
     }
 };
 const existisRodada = async (id) => {
-    const rodadaSnapshot = await getDocs(query(collection(db, 'Rodadas'), where('id', '==', id)));
+    const rodadaSnapshot = await getDocs(query(collection(db, 'Rodada'), where('id', '==', id)));
     return !rodadaSnapshot.empty;
 };
 
@@ -81,7 +81,7 @@ app.get("/", (req, res) =>{
 })
 
 app.listen(porta, () => {
-    console.log('ligou...');
+    console.log('Ligou na porta '+porta);
 })
 
 /*---------------- GET ------------------*/
@@ -152,25 +152,32 @@ app.get('/rodadas/:id', async (req, res) => {
 });
 
 /*---------------- POST ------------------*/
-const addPlayer = async (nickname, email, senha) => {
-    await setDoc(doc(usersCol, nickname), {
+const addPlayer = async (nickname, email, senha, maiorRodada) => {
+    await setDoc(doc(players, nickname), {
         email: email,
-        maiorRodada: 0,
+        maiorRodada: maiorRodada,
+        nickname: nickname,
         senha: senha
+    });
+}
+const addRodada = async (id, enemies) => {
+    await setDoc(doc(rodadas, id), {
+        enemies: enemies,
+        id: id
     });
 }
 
 app.post('/players', async (req, res) => {
-    const nickname = req.body.nickname;
     const email = req.body.email;
+    const nickname = req.body.nickname;
     const senha = req.body.senha;
 
-    if (nickname && email && senha) {
+    if (email && nickname && senha) {
         existsEmail(email).then(exists => {
             if (exists) {
-                res.status(409).send('[409 Conflict]:Player already exists');
+                res.status(409).send('409 Conflict');
             } else {
-                addUser(nickname, email, senha).then(() => {
+                addPlayer(nickname, email, senha, 1).then(() => {
                     res.send({response: '201 Created'});
                 });
             }
@@ -181,51 +188,62 @@ app.post('/players', async (req, res) => {
 });
 
 app.post('/rodadas', async (req, res) => {
-    const newRodada = req.body;
+    const id = req.body.id;
+    const enemies = req.body.enemies;
 
-    if (!validateRodada(newRodada)) {
-        handleResponse(res, 400, 'Invalid rodada data');
-        return;
-    }
+    console.log(req.body);
 
-    if (await existisRodada(newRodada.id)) {
-        handleResponse(res, 400, 'Rodada with the same ID already exists');
-        return;
-    }
-
-    try {
-        const rodadaRef = doc(rodadas, newRodada.id);
-        await setDoc(rodadaRef, newRodada);
-        handleResponse(res, 201, 'Rodada created successfully');
-    } catch (error) {
-        console.error('Error creating rodada: ', error);
-        handleResponse(res, 500, 'Internal Server Error');
+    if (id && enemies) {
+        existisRodada(id).then(exists => {
+            if (exists) {
+                res.status(409).send('409 Conflict');
+            } else {
+                addRodada(id, enemies).then(() => {
+                    res.send({response: '201 Created'});
+                });
+            }
+        });
+    } else {
+        res.status(400).send('400 Bad Request');
     }
 });
 
 /*---------------- PUT ------------------*/
-app.put('/players/:id', async (req, res) => {
-    const id = req.params.id;
-    const updatedPlayer = req.body;
+const getPlayers = async () => {
+    const data = await getDocs(players);
+    const playersArray = [];
+    data.docs.forEach(doc => {
+        playersArray.push(doc.data());
+    });
+    return playersArray;
+}
 
-    if (!validatePlayer(updatedPlayer)) {
-        handleResponse(res, 400, 'Invalid player data');
-        return;
-    }
+app.put('/players/:nickname', async (req, res) => {
+    const email = req.body.email;
+    const nickname = req.body.nickname;
+    const senha = req.body.senha;
+    const maiorRodada = req.body.maiorRodada;
 
-    if (!(await existsPlayer(id))) {
-        handleResponse(res, 404, 'Player not found');
-        return;
-    }
-
-    try {
-        const playerRef = doc(players, id);
-        await setDoc(playerRef, updatedPlayer, { merge: true });
-        handleResponse(res, 200, 'Player updated successfully');
-    } catch (error) {
-        console.error('Error updating player: ', error);
-        handleResponse(res, 500, 'Internal Server Error');
-    }
+    getPlayers().then(players => {
+        const player = players.find(player => player.email === email);
+        if (player) {
+            if (email && nickname && senha) {
+                existsEmail(email).then(exists => {
+                    if (exists) {
+                        addPlayer(nickname, email, senha, maiorRodada).then(() => {
+                            res.send({response: '200 OK'});
+                        });
+                    } else {
+                        res.status(404).send('404 Not Found');
+                    }
+                });
+            } else {
+                res.status(400).send('400 Bad Request');
+            }
+        } else {
+            res.status(404).send('404 Not Found');
+        }
+    });
 });
 
 app.put('/rodadas/:id', async (req, res) => {
@@ -253,16 +271,16 @@ app.put('/rodadas/:id', async (req, res) => {
 });
 
 /*---------------- DELETE ------------------*/
-app.delete('/players/:id', async (req, res) => {
-    const id = req.params.id;
+app.delete('/players/:nickname', async (req, res) => {
+    const nickname = req.params.nickname;
 
-    if (!(await existsPlayer(id))) {
+    if (!(await existsPlayer(nickname))) {
         handleResponse(res, 404, 'Player not found');
         return;
     }
 
     try {
-        const playerRef = doc(players, id);
+        const playerRef = doc(players, nickname);
         await deleteDoc(playerRef);
         handleResponse(res, 200, 'Player deleted successfully');
     } catch (error) {

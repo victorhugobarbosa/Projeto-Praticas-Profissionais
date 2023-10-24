@@ -44,11 +44,12 @@ class Cadastro : AppCompatActivity() {
 
         val player = JSONObject();
         player.put("email", email);
-        player.put("maiorRodada", 0);
+        player.put("maiorRodada", 1);
+        player.put("nickname", nickname)
         player.put("senha", senha);
 
         val queue = Volley.newRequestQueue(this)
-        val url = "http://192.168.180.209:3000/test"
+        val url = "http://192.168.180.209:3000/players"
 
         Toast.makeText(applicationContext,"Cadastrando: ${player}",Toast.LENGTH_SHORT).show();
 
