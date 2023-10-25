@@ -6,65 +6,63 @@ import android.graphics.Rect
 import com.example.cotucatdpd.GameDisplay
 import com.example.cotucatdpd.graphics.SpriteSheet
 
-import com.example.cotucatdpd.map.MapLayout.NUMBER_OF_COLUMN_TILES
-import com.example.cotucatdpd.map.MapLayout.NUMBER_OF_ROW_TILES
-import com.example.cotucatdpd.map.MapLayout.TILE_HEIGHT_PIXELS
-import com.example.cotucatdpd.map.MapLayout.TILE_WIDTH_PIXELS
 
-class Tilemap(private val spriteSheet: SpriteSheet) {
+class Tilemap(spriteSheet: SpriteSheet) {
 
     private val mapLayout = MapLayout()
-    private val tilemap: Array<Array<Tile>>
-
-    private var mapBitmap: Bitmap
+    private lateinit var tilemap: Array<Array<Tile?>>
+    private val spriteSheet = spriteSheet
+    private var mapBitmap: Bitmap? = null
 
     init {
         initializeTilemap()
     }
 
     private fun initializeTilemap() {
-        val layout = mapLayout.layout
-        tilemap = Array(NUMBER_OF_ROW_TILES) { Array(NUMBER_OF_COLUMN_TILES) { Tile() } }
+        val layout = mapLayout.getLayout()
+        tilemap = Array<Array<Tile?>>(mapLayout.NUMBER_OF_ROW_TILES) {
+            arrayOfNulls<Tile>(mapLayout.NUMBER_OF_COLUMN_TILES)
+        }
 
-        for (iRow in 0 until NUMBER_OF_ROW_TILES) {
-            for (iCol in 0 until NUMBER_OF_COLUMN_TILES) {
+        for (iRow in 0 until mapLayout.NUMBER_OF_ROW_TILES) {
+            for (iCol in 0 until mapLayout.NUMBER_OF_COLUMN_TILES) {
                 tilemap[iRow][iCol] = Tile.getTile(
-                        layout[iRow][iCol],
-                        spriteSheet,
-                        getRectByIndex(iRow, iCol)
-                )
+                    layout[iRow][iCol],
+                    spriteSheet,
+                    getRectByIndex(iRow, iCol)
+                )!!
             }
         }
 
         val config = Bitmap.Config.ARGB_8888
         mapBitmap = Bitmap.createBitmap(
-                NUMBER_OF_COLUMN_TILES * TILE_WIDTH_PIXELS,
-                NUMBER_OF_ROW_TILES * TILE_HEIGHT_PIXELS,
+                mapLayout.NUMBER_OF_COLUMN_TILES * mapLayout.TILE_WIDTH_PIXELS,
+                mapLayout.NUMBER_OF_ROW_TILES * mapLayout.TILE_HEIGHT_PIXELS,
                 config
         )
 
-        val mapCanvas = Canvas(mapBitmap)
+        val mapCanvas = Canvas(mapBitmap!!)
 
-        for (iRow in 0 until NUMBER_OF_ROW_TILES) {
-            for (iCol in 0 until NUMBER_OF_COLUMN_TILES) {
-                tilemap[iRow][iCol].draw(mapCanvas)
+        for (iRow in 0 until mapLayout.NUMBER_OF_ROW_TILES) {
+            for (iCol in 0 until mapLayout.NUMBER_OF_COLUMN_TILES) {
+                tilemap[iRow][iCol]!!.draw(mapCanvas)
             }
         }
     }
 
     private fun getRectByIndex(idxRow: Int, idxCol: Int): Rect {
         return Rect(
-                idxCol * TILE_WIDTH_PIXELS,
-                idxRow * TILE_HEIGHT_PIXELS,
-                (idxCol + 1) * TILE_WIDTH_PIXELS,
-                (idxRow + 1) * TILE_HEIGHT_PIXELS
+                idxCol * mapLayout.TILE_WIDTH_PIXELS,
+                idxRow * mapLayout.TILE_HEIGHT_PIXELS,
+                (idxCol + 1) * mapLayout.TILE_WIDTH_PIXELS,
+                (idxRow + 1) * mapLayout.TILE_HEIGHT_PIXELS
         )
     }
 
     fun draw(canvas: Canvas, gameDisplay: GameDisplay) {
         canvas.drawBitmap(
-                mapBitmap,
-                gameDisplay.gameRect,
+                mapBitmap!!,
+                gameDisplay.gameRect(),
                 gameDisplay.DISPLAY_RECT,
                 null
         )

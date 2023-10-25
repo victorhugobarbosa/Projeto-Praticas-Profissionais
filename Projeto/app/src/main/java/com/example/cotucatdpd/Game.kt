@@ -10,10 +10,11 @@ import android.view.SurfaceView
 import com.example.cotucatdpd.gameObject.*
 import com.example.cotucatdpd.gamePanel.*
 import com.example.cotucatdpd.graphics.*
+import com.example.cotucatdpd.map.Tilemap
 
 class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback{
 
-    private val tilemap: tilemap
+    private var tilemap: Tilemap
     private val player: Player
     private var loop: GameLoop
     private val joystick: Joystick
@@ -23,7 +24,7 @@ class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback{
     private var joystickPointerID = 0
     private var numberOfSpellsToCast = 0
     private var gameOver: GameOver?
-    private var gameDisplay: GameDisplay?
+    private var gameDisplay: GameDisplay
     //private var spriteSheet = SpriteSheet(context)
 
     init {
@@ -43,7 +44,7 @@ class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback{
 
         val spriteSheet = SpriteSheet(context)
         val animator = Animator(spriteSheet.getPlayerSpriteArray())
-        player = Player(getContext(), 500.0, 500.0, 30.0, joystick, animator)
+        player = Player(getContext(), 1500.0, 1500.0, 30.0, joystick, animator)
         enemy = Enemy(getContext(), player)
         //enemy = Enemy(getContext(), player, 0.0, 0.0, 20.0)
 
@@ -51,7 +52,7 @@ class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback{
 
         // Iniciar Tilemap
 
-        val tilemap = Tilemap(spriteSheet);
+        tilemap = Tilemap(spriteSheet);
 
         isFocusable = true
     }

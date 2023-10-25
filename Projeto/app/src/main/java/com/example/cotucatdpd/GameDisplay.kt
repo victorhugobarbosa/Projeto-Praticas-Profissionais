@@ -1,5 +1,6 @@
 package com.example.cotucatdpd
 
+import android.graphics.Rect
 import com.example.cotucatdpd.gameObject.GameObject
 
 class GameDisplay(widthPixels: Int, heightPixels: Int, center: GameObject) {
@@ -9,7 +10,9 @@ class GameDisplay(widthPixels: Int, heightPixels: Int, center: GameObject) {
     private var displayCenterY = heightPixels/2.0
     private var gameCenterX = 0.0
     private var gameCenterY = 0.0
-    private var centerObject: GameObject
+    private var widthPixels = widthPixels
+    private var heightPixels = heightPixels
+    private var centerObject = center
     val DISPLAY_RECT: Rect = Rect(0, 0, widthPixels, heightPixels)
 
     init{
@@ -33,6 +36,8 @@ class GameDisplay(widthPixels: Int, heightPixels: Int, center: GameObject) {
     }
 
     fun gameRect(): Rect {
+
+
         return Rect(
                 (gameCenterX - widthPixels / 2).toInt(),
                 (gameCenterY - heightPixels / 2).toInt(),

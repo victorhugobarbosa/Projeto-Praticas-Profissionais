@@ -11,19 +11,4 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <Button
-        android:id="@+id/btnInicio"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/btnInicio"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="415dp"
-        android:layout_marginEnd="161dp"
-        android:layout_marginBottom="268dp"
-        android:onClick="inicioPage"
-        android:text="Inicio" />
-
 </RelativeLayout>

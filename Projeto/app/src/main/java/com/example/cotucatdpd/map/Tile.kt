@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import com.example.cotucatdpd.graphics.SpriteSheet
 
+
 abstract class Tile(mapLocationRect: Rect) {
 
     protected val mapLocationRect: Rect = mapLocationRect
@@ -13,13 +14,14 @@ abstract class Tile(mapLocationRect: Rect) {
     }
 
     companion object {
-        fun getTile(idxTileType: Int, spriteSheet: SpriteSheet, mapLocationRect: Rect): Tile? {
+        fun getTile(idxTileType: Int, spriteSheet: SpriteSheet?, mapLocationRect: Rect?): Tile? {
             return when (TileType.values()[idxTileType]) {
-                TileType.GROUND_TILE -> GroundTile(spriteSheet, mapLocationRect)
+                TileType.GROUND_TILE -> GroundTile(spriteSheet!!, mapLocationRect!!)
                 else -> null
             }
         }
     }
 
-    abstract fun draw(canvas: Canvas)
+    abstract fun draw(canvas: Canvas?)
+
 }
