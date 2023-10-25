@@ -7,12 +7,14 @@ import android.graphics.Rect
 import com.example.cotucatdpd.R
 
 class SpriteSheet(context: Context?) {
+    private val SPRITE_WIDTH_PIXELS = 64
+    private val SPRITE_HEIGHT_PIXELS = 64
     private var bitmapOptions = BitmapFactory.Options()
     private var bitmap: Bitmap?
 
     init{
         bitmapOptions.inScaled = false
-        bitmap = BitmapFactory.decodeResource(context!!.resources, R.drawable.personagem_pd, bitmapOptions)
+        bitmap = BitmapFactory.decodeResource(context!!.resources, R.drawable.sprite_sheet, bitmapOptions)
     }
 
     fun getPlayerSpriteArray(): Array<Sprite?> {
@@ -26,5 +28,17 @@ class SpriteSheet(context: Context?) {
 
     fun getBitmap(): Bitmap? {
         return bitmap
+    }
+    fun getGroundSprite(): Sprite {
+        return getSpriteByIndex(1, 0)
+    }
+
+    private fun getSpriteByIndex(idxRow: Int, idxCol: Int): Sprite {
+        return Sprite(this, Rect(
+                idxCol * SPRITE_WIDTH_PIXELS,
+                idxRow * SPRITE_HEIGHT_PIXELS,
+                (idxCol + 1) * SPRITE_WIDTH_PIXELS,
+                (idxRow + 1) * SPRITE_HEIGHT_PIXELS
+        ))
     }
 }

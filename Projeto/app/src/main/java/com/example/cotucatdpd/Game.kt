@@ -13,6 +13,7 @@ import com.example.cotucatdpd.graphics.*
 
 class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback{
 
+    private val tilemap: tilemap
     private val player: Player
     private var loop: GameLoop
     private val joystick: Joystick
@@ -47,6 +48,10 @@ class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback{
         //enemy = Enemy(getContext(), player, 0.0, 0.0, 20.0)
 
         gameDisplay = GameDisplay(displayMetrics.widthPixels, displayMetrics.heightPixels, player)
+
+        // Iniciar Tilemap
+
+        val tilemap = Tilemap(spriteSheet);
 
         isFocusable = true
     }
@@ -114,6 +119,10 @@ class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback{
 
     override fun draw(canvas: Canvas){
         super.draw(canvas)
+
+        // tilemap
+
+        tilemap.draw(canvas, gameDisplay);
 
         joystick.draw(canvas)
         player.draw(canvas, gameDisplay!!)

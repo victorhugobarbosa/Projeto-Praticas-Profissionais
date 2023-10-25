@@ -10,9 +10,10 @@ class GameDisplay(widthPixels: Int, heightPixels: Int, center: GameObject) {
     private var gameCenterX = 0.0
     private var gameCenterY = 0.0
     private var centerObject: GameObject
+    val DISPLAY_RECT: Rect = Rect(0, 0, widthPixels, heightPixels)
 
     init{
-        centerObject = center
+        update()
     }
 
     fun update(){
@@ -30,4 +31,14 @@ class GameDisplay(widthPixels: Int, heightPixels: Int, center: GameObject) {
     fun gameToDisplayY(y: Double): Float {
         return (y + displayOffsetY).toFloat()
     }
+
+    fun gameRect(): Rect {
+        return Rect(
+                (gameCenterX - widthPixels / 2).toInt(),
+                (gameCenterY - heightPixels / 2).toInt(),
+                (gameCenterX + widthPixels / 2).toInt(),
+                (gameCenterY + heightPixels / 2).toInt()
+        )
+    }
+
 }
