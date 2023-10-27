@@ -14,6 +14,8 @@ class Login : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        Toast.makeText(applicationContext,"Seja bem-vindo!",Toast.LENGTH_SHORT).show()
     }
 
     fun login(view: View) {
@@ -29,7 +31,7 @@ class Login : AppCompatActivity() {
         }
 
         val queue = Volley.newRequestQueue(this)
-        val url = "http://192.168.180.71:3000/players/$nickname"
+        val url = "http://192.168.180.209:3000/players/$nickname"
 
         val jsonObjectRequest = JsonObjectRequest(
             Request.Method.GET, url, null,

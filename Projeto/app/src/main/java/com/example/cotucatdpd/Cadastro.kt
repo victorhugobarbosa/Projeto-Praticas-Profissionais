@@ -18,8 +18,6 @@ class Cadastro : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cadastro)
-
-        Toast.makeText(applicationContext,"Seja bem-vindo!",Toast.LENGTH_SHORT).show()
     }
 
     fun register(view: View){
@@ -34,11 +32,11 @@ class Cadastro : AppCompatActivity() {
         val confirmarSenha = confirmarSenhaText.text.toString().trim();
 
         if (email.isEmpty() || nickname.isEmpty() || senha.isEmpty() || confirmarSenha.isEmpty()) {
-            Toast.makeText(applicationContext,"Por favor, preencha todos os campos",Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext,"Preencha todos os campos",Toast.LENGTH_SHORT).show()
             return
         }
         if(confirmarSenha != senha){
-            Toast.makeText(applicationContext,"Insira a senha correta",Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext,"Erro ao confirmar senha",Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -49,13 +47,12 @@ class Cadastro : AppCompatActivity() {
         player.put("senha", senha);
 
         val queue = Volley.newRequestQueue(this)
-        val url = "http://192.168.180.71:3000/players"
-
-        Toast.makeText(applicationContext,"Cadastrando: ${player}",Toast.LENGTH_SHORT).show();
+        val url = "http://192.168.180.209:3000/players"
 
         val jsonObjectRequest = JsonObjectRequest(
             Request.Method.POST, url, player,
             { reponse ->
+                Toast.makeText(applicationContext,"Conta cadastrada!",Toast.LENGTH_SHORT).show();
                 val loginPage = Intent(this, Login::class.java);
                 startActivity(loginPage);
             },
