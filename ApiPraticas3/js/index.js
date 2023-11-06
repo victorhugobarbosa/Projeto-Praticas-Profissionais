@@ -19,7 +19,6 @@ const firebase = initializeApp(firebaseConfig);
 const db = getFirestore(firebase);
 
 const players = collection(db, 'Player');
-const rodadas = collection(db, 'Rodada');
 
 const validatePlayer = (player) => {
     try {
@@ -31,18 +30,6 @@ const validatePlayer = (player) => {
             player.senha.length >= 8 && player.senha.length <= 30;
     } catch (error) {
         console.error('Error validating player: ', error);
-        return false;
-    }
-};
-const validateRodada = (rodada) => {
-    try {
-        if (!rodada.id || !rodada.enemies) {
-            return false;
-        }
-        return rodada.id >= 1 &&
-            rodada.enemies >= 13 && rodada.descricao.length <= 300;
-    } catch (error) {
-        console.error('Error validating rodada: ', error);
         return false;
     }
 };
@@ -62,15 +49,6 @@ const existsEmail = async (email) => {
         return data.docs.some((doc) => doc.data().email === email);
     } catch (error) {
         console.error('Error checking if player email exists: ', error);
-        return false;
-    }
-};
-const existisRodada = async (id) => {
-    try {
-        const data = await getDocs(rodadas);
-        return data.docs.some((doc) => doc.data().id === id);
-    } catch (error) {
-        console.error('Error checking if rodada exists: ', error);
         return false;
     }
 };
@@ -123,46 +101,7 @@ app.get('/players/:id', async (req, res) => {
     }
 });
 
-app.get('/rodadas/', async (req, res) => {
-    try {
-        const rodadasSnapshot = await getDocs(rodadas);
-        const rodadasList = [];
-
-        rodadasSnapshot.forEach((rodadaDoc) => {
-            rodadasList.push(rodadaDoc.data());
-        });
-
-        res.status(200).send(rodadasList);
-    } catch (error) {
-        console.error('Error retrieving players: ', error);
-        handleResponse(res, 500, 'Internal Server Error');
-    }
-});
-
-app.get('/rodadas/:id', async (req, res) => {
-    const id = req.params.id;
-    try {
-        const rodadasRef = doc(rodadas, id); // Get the specific player document by ID
-        const rodadasDoc = await getDoc(rodadasRef);
-
-        if (rodadasDoc.exists()) {
-            res.status(200).send(rodadasDoc.data());
-        } else {
-            handleResponse(res, 404, 'Rodada does not exist');
-        }
-    } catch (error) {
-        console.error('Error retrieving rodada: ', error);
-        handleResponse(res, 500, 'Internal Server Error');
-    }
-});
-
 /*---------------- POST ------------------*/
-const addRodada = async (id, enemies) => {
-    await setDoc(doc(rodadas, id), {
-        enemies: enemies,
-        id: id
-    });
-}
 const addPlayer = async (nickname, email, senha, maiorRodada) => {
     await setDoc(doc(players, nickname), {
         email: email,
@@ -192,27 +131,6 @@ app.post('/players', async (req, res) => {
     }
 });
 
-app.post('/rodadas', async (req, res) => {
-    const id = req.body.id;
-    const enemies = req.body.enemies;
-
-    console.log(req.body);
-
-    if (id && enemies) {
-        existisRodada(id).then(exists => {
-            if (exists) {
-                res.status(409).send('409 Conflict');
-            } else {
-                addRodada(id, enemies).then(() => {
-                    res.send({response: '201 Created'});
-                });
-            }
-        });
-    } else {
-        res.status(400).send('400 Bad Request');
-    }
-});
-
 /*---------------- PUT ------------------*/
 const getPlayers = async () => {
     const data = await getDocs(players);
@@ -231,6 +149,7 @@ app.put('/players/:nickname', async (req, res) => {
 
     getPlayers().then(players => {
         const player = players.find(player => player.email === email);
+        console.log(player)
         if (player) {
             if (email && nickname && senha) {
                 existsEmail(email).then(exists => {
@@ -249,30 +168,6 @@ app.put('/players/:nickname', async (req, res) => {
             res.status(404).send('404 Not Found');
         }
     });
-});
-
-app.put('/rodadas/:id', async (req, res) => {
-    const id = req.params.id;
-    const updatedRodada = req.body;
-
-    if (!validateRodada(updatedRodada)) {
-        handleResponse(res, 400, 'Invalid rodada data');
-        return;
-    }
-
-    if (!(await existisRodada(id))) {
-        handleResponse(res, 404, 'Rodada not found');
-        return;
-    }
-
-    try {
-        const rodadaRef = doc(rodadas, id);
-        await setDoc(rodadaRef, updatedRodada, { merge: true });
-        handleResponse(res, 200, 'Rodada updated successfully');
-    } catch (error) {
-        console.error('Error updating rodada: ', error);
-        handleResponse(res, 500, 'Internal Server Error');
-    }
 });
 
 /*---------------- DELETE ------------------*/
