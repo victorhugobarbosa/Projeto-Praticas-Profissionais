@@ -22,12 +22,12 @@ const players = collection(db, 'Player');
 
 const validatePlayer = (player) => {
     try {
-        if (!player.id || !player.email || !player.senha) {
+        if (!player.id || !player.email || !player.senha || player.pontos) {
             return false;
         }
         return player.id.length >= 4 && player.id.length <= 15 &&
             player.email.length >= 5 && player.email.length <= 30 && player.email.includes('@') && player.email.includes('.') &&
-            player.senha.length >= 8 && player.senha.length <= 30;
+            player.senha.length >= 8 && player.senha.length <= 30 && player.pontos >= 0;
     } catch (error) {
         console.error('Error validating player: ', error);
         return false;
@@ -102,11 +102,11 @@ app.get('/players/:id', async (req, res) => {
 });
 
 /*---------------- POST ------------------*/
-const addPlayer = async (nickname, email, senha, maiorRodada) => {
+const addPlayer = async (nickname, email, senha, pontos) => {
     await setDoc(doc(players, nickname), {
         email: email,
-        maiorRodada: maiorRodada,
         nickname: nickname,
+        pontos: pontos,
         senha: senha
     });
 }
@@ -121,7 +121,7 @@ app.post('/players', async (req, res) => {
             if (exists) {
                 res.status(409).send('409 Conflict');
             } else {
-                addPlayer(nickname, email, senha, 1).then(() => {
+                addPlayer(nickname, email, senha, 0).then(() => {
                     res.send({response: '201 Created'});
                 });
             }
@@ -145,7 +145,7 @@ app.put('/players/:nickname', async (req, res) => {
     const email = req.body.email;
     const nickname = req.body.nickname;
     const senha = req.body.senha;
-    const maiorRodada = req.body.maiorRodada;
+    const pontos = req.body.pontos;
 
     getPlayers().then(players => {
         const player = players.find(player => player.email === email);
@@ -154,7 +154,7 @@ app.put('/players/:nickname', async (req, res) => {
             if (email && nickname && senha) {
                 existsEmail(email).then(exists => {
                     if (exists) {
-                        addPlayer(nickname, email, senha, maiorRodada).then(() => {
+                        addPlayer(nickname, email, senha, pontos).then(() => {
                             res.send({response: '200 OK'});
                         });
                     } else {
