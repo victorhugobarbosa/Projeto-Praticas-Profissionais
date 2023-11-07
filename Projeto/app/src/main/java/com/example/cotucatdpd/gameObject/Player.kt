@@ -20,6 +20,7 @@ class Player(context: Context?, positionX: Double, positionY: Double, radius: Do
     private var healthPoints = MAX_HEALTH_POINTS
     private var animator = animator
     private var playerState = PlayerState(this)
+    private var points = 0
 
     override fun update(){
         velocityX = joystick.getActuatorX()!!*MAX_SPEED
@@ -45,6 +46,10 @@ class Player(context: Context?, positionX: Double, positionY: Double, radius: Do
     fun setHealthPoints(newHp: Int){
         if(newHp >= 0 )
             healthPoints = newHp
+    }
+    fun updatePoints(morePoints: Int){
+        if(morePoints >= 0 )
+            points += morePoints
     }
 
     fun getPlayerState() : PlayerState {

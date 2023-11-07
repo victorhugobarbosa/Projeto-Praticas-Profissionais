@@ -4,5 +4,5 @@ data class PlayerData (
     val id: String = "",
     val email: String = "",
     val passwsenhad: String = "",
-    val maiorRodada: Int = 0
+    val pontuacao: Int = 0
 )

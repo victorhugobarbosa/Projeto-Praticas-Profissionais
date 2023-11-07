@@ -136,6 +136,7 @@ class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback{
 
         if(player.getHealthPoints() <= 0){
             gameOver!!.draw(canvas)
+            restartGame()
         }
         rotateCanvas(canvas)
     }
@@ -181,6 +182,7 @@ class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback{
                 if(e.isColliding(spell, enemy)) {
                     iteratorE.remove()
                     iteratorS.remove()
+                    player.updatePoints(50)
                     break
                 }
             }
@@ -193,6 +195,16 @@ class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback{
         var angleInDeg = angleInRads * 57
 
         canvas!!.rotate(angleInDeg.toFloat())
+    }
+
+    fun restartGame(){
+        var handler = Handler()
+        handler.postDelayed({
+            //Update para os status do player caso ele esteja logado
+            val intent = Intent(context, GameActivity::class.java)
+            startActivity(intent)
+            activity?.finish()
+        }, 5000)
     }
 
     fun pause(){
