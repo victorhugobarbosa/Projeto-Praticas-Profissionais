@@ -26,6 +26,15 @@ class SpriteSheet(context: Context?) {
         return spriteList
     }
 
+    fun getInimigosSpriteArray(): Array<Sprite?> {
+        val spriteList = arrayOfNulls<Sprite>(3)
+        spriteList[0] = Sprite(this, Rect(0*64, 2, 1*64, 64))
+        spriteList[1] = Sprite(this, Rect(1*64, 2, 2*64, 64))
+        spriteList[2] = Sprite(this, Rect(2*64, 2, 3*64, 64))
+        //return Sprite(this, Rect(0, 0, 320, 320))
+        return spriteList
+    }
+
     fun getBitmap(): Bitmap? {
         return bitmap
     }

@@ -38,6 +38,7 @@ class Game(context: Context?, nome: String) : SurfaceView(context), SurfaceHolde
     private var gameOver: GameOver?
     private var gameDisplay: GameDisplay
     private var nome = nome
+    private var animatorInimigo : Animator
     //private var spriteSheet = SpriteSheet(context)
 
     init {
@@ -58,7 +59,8 @@ class Game(context: Context?, nome: String) : SurfaceView(context), SurfaceHolde
         val spriteSheet = SpriteSheet(context)
         val animator = Animator(spriteSheet.getPlayerSpriteArray())
         player = Player(getContext(), 4000.0, 4000.0, 30.0, joystick, animator)
-        enemy = Enemy(getContext(), player)
+        animatorInimigo = Animator(spriteSheet.getInimigosSpriteArray())
+        enemy = Enemy(getContext(), player, animatorInimigo)
         //enemy = Enemy(getContext(), player, 0.0, 0.0, 20.0)
 
         gameDisplay = GameDisplay(displayMetrics.widthPixels, displayMetrics.heightPixels, player)
@@ -191,7 +193,7 @@ class Game(context: Context?, nome: String) : SurfaceView(context), SurfaceHolde
         // Spawn enemy
         if (enemy!!.readyToSpawn()) {
             enemyList.add(enemy!!)
-            enemy = Enemy(getContext(), player)
+            enemy = Enemy(getContext(), player, animatorInimigo)
         }
         while(numberOfSpellsToCast > 0){
             spellList.add(Spell(context, player))
@@ -206,7 +208,7 @@ class Game(context: Context?, nome: String) : SurfaceView(context), SurfaceHolde
         }
 
         var iteratorE = enemyList.iterator()
-        var e = Enemy(context, player)
+        var e = Enemy(context, player, animatorInimigo)
         while(iteratorE.hasNext()){
             var enemy = iteratorE.next()
             if(e.isColliding(enemy, player)){
