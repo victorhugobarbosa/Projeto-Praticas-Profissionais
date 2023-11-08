@@ -55,7 +55,7 @@ class Cadastro : AppCompatActivity() {
         player.put("senha", senha);
 
         val queue = Volley.newRequestQueue(this)
-        val url = "http://192.168.15.10:3000/players"
+        val url = "http://192.168.180.71:3000/players"
         var exists = false
 
         val getRequest = JsonArrayRequest(

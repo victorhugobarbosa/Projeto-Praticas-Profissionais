@@ -147,6 +147,7 @@ app.put('/players/:nickname', async (req, res) => {
     const senha = req.body.senha;
     const pontos = req.body.pontos;
 
+    console.log(email+"/"+nickname+"/"+senha+"/"+pontos)
     getPlayers().then(players => {
         const player = players.find(player => player.email === email);
         console.log(player)

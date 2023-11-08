@@ -1,6 +1,7 @@
 package com.example.cotucatdpd
 
 import android.app.Activity
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 
@@ -10,7 +11,9 @@ class GameActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        game = Game(this)
+        var extras = intent.extras
+        var nome = extras!!.getString("nickname")!!
+        game = Game(this, nome)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
         setContentView(game)
