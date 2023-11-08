@@ -34,8 +34,8 @@ class Enemy(context: Context?, player: Player, animator: Animator) :
     }
 
     override fun draw(canvas: Canvas?, gameDisplay: GameDisplay) {
-        super.draw(canvas, gameDisplay)
-        animator.draw(canvas, gameDisplay, player)
+        //super.draw(canvas, gameDisplay)
+        animator.draw(canvas, gameDisplay, this)
     }
 
     fun getInimigoState() : InimigoState {
