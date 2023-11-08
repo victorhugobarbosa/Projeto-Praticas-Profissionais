@@ -51,6 +51,9 @@ class Player(context: Context?, positionX: Double, positionY: Double, radius: Do
         if(morePoints >= 0 )
             points += morePoints
     }
+    fun getPoints() : Int {
+        return points
+    }
 
     fun getPlayerState() : PlayerState {
         return playerState

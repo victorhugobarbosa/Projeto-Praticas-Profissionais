@@ -7,6 +7,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
@@ -38,7 +39,7 @@ class Login : AppCompatActivity() {
         }
 
         val queue = Volley.newRequestQueue(this)
-        val url = "http://192.168.15.10:3000/players/$nickname"
+        val url = "http://192.168.180.71:3000/players/$nickname"
 
         val jsonObjectRequest = JsonObjectRequest(
             Request.Method.GET, url, null,
@@ -54,6 +55,8 @@ class Login : AppCompatActivity() {
                 }
             },
             { error ->
+                //
+                // AlertDialog.Builder(applicationContext).setTitle("erro").setMessage(error.message).show()
                 Toast.makeText(applicationContext,"Nickname incorreto", Toast.LENGTH_SHORT).show();
             }
         )

@@ -14,12 +14,18 @@ class SecondFragment : Fragment() {
     private var _binding: FragmentSecondBinding? = null
 
     private val binding get() = _binding!!
+    lateinit var extra : Bundle
+    var nome = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
+        if(activity?.intent?.extras != null) {
+            extra = activity?.intent?.extras!!
+            nome = extra!!.getString("nickname").toString()
+        }
         _binding = FragmentSecondBinding.inflate(inflater, container, false)
         return binding.root
 
@@ -32,6 +38,10 @@ class SecondFragment : Fragment() {
 
         binding.btnPD.setOnClickListener {
             val intent = Intent(context, GameActivity::class.java)
+            if(nome == "")
+                intent.putExtra("nickname", "no-name")
+            else
+                intent.putExtra("nickname", nome)
             startActivity(intent)
             activity?.finish()
         }

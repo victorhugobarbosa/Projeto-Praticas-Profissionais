@@ -2,17 +2,29 @@ package com.example.cotucatdpd
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.Canvas
+import android.graphics.Paint
+import android.os.Handler
+import android.os.Looper
 import android.util.DisplayMetrics
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import android.widget.Toast
+import androidx.core.content.ContextCompat
+import com.android.volley.Request
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.example.cotucatdpd.gameObject.*
 import com.example.cotucatdpd.gamePanel.*
 import com.example.cotucatdpd.graphics.*
 import com.example.cotucatdpd.map.Tilemap
+import org.json.JSONObject
+import java.util.Timer
+import kotlin.concurrent.timerTask
 
-class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback{
+class Game(context: Context?, nome: String) : SurfaceView(context), SurfaceHolder.Callback{
 
     private var tilemap: Tilemap
     private val player: Player
@@ -25,6 +37,7 @@ class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback{
     private var numberOfSpellsToCast = 0
     private var gameOver: GameOver?
     private var gameDisplay: GameDisplay
+    private var nome = nome
     //private var spriteSheet = SpriteSheet(context)
 
     init {
@@ -44,7 +57,7 @@ class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback{
 
         val spriteSheet = SpriteSheet(context)
         val animator = Animator(spriteSheet.getPlayerSpriteArray())
-        player = Player(getContext(), 1500.0, 1500.0, 30.0, joystick, animator)
+        player = Player(getContext(), 4000.0, 4000.0, 30.0, joystick, animator)
         enemy = Enemy(getContext(), player)
         //enemy = Enemy(getContext(), player, 0.0, 0.0, 20.0)
 
@@ -55,6 +68,20 @@ class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback{
         tilemap = Tilemap(spriteSheet);
 
         isFocusable = true
+
+        val queue = Volley.newRequestQueue(context)
+        val url = "http://192.168.180.71:3000/players/$nome"
+
+        val jsonObjectGet = JsonObjectRequest(
+            Request.Method.GET, url, null,
+            { response ->
+                player.updatePoints(response.getInt("pontos"))
+            },
+            { error ->
+                Toast.makeText(context, "Erro ao puxar pontos:"+error.message, Toast.LENGTH_SHORT).show()
+            }
+        )
+        queue.add(jsonObjectGet)
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -136,15 +163,27 @@ class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback{
 
         if(player.getHealthPoints() <= 0){
             gameOver!!.draw(canvas)
-            restartGame()
         }
+        drawPoints(canvas)
         rotateCanvas(canvas)
     }
 
+    var updating = false
     fun update(){
 
-        if(player.getHealthPoints() <= 0)
+        if(player.getHealthPoints() <= 0){
+            if(!updating){
+                updating = true
+                Timer().schedule(timerTask {
+                    if(nome != "no-name"){
+                        updatePoints(nome)
+                    }
+                    val intent = Intent(context, MainActivity::class.java)
+                    context.startActivity(intent)
+                }, 3000)
+            }
             return
+        }
 
         joystick.update()
         player.update()
@@ -187,7 +226,58 @@ class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback{
                 }
             }
         }
+
         gameDisplay!!.update()
+    }
+
+    fun drawPoints(canvas: Canvas){
+        var text = "Pontos:"+player.getPoints()
+
+        var x = 1100.0
+        var y = 50.0
+
+        var paint = Paint()
+        var color = ContextCompat.getColor(context!!, R.color.white)
+        paint.setColor(color)
+        var textSize = 50.0
+        paint.textSize = textSize.toFloat()
+        canvas!!.drawText(text, x.toFloat(), y.toFloat(), paint)
+    }
+
+    fun updatePoints(nickname: String){
+        val queue = Volley.newRequestQueue(context)
+        val url = "http://192.168.180.71:3000/players/$nickname"
+
+        var email = ""
+        var senha = ""
+        val jsonObjectGet = JsonObjectRequest(
+            Request.Method.GET, url, null,
+            { response ->
+                email = response.optString("email")
+                senha = response.optString("senha")
+
+                var jsonObject = JSONObject()
+                jsonObject.put("email", email);
+                jsonObject.put("pontos", player.getPoints())
+                jsonObject.put("nickname", nickname)
+                jsonObject.put("senha", senha);
+
+                val jsonObjectRequest = JsonObjectRequest(
+                    Request.Method.PUT, url, jsonObject,
+                    { response ->
+                        Toast.makeText(context, "Player atualizado", Toast.LENGTH_SHORT).show()
+                    },
+                    { error ->
+                        Toast.makeText(context, "Erro:"+error.message, Toast.LENGTH_SHORT).show()
+                    }
+                )
+                queue.add(jsonObjectRequest)
+            },
+            { error ->
+
+            }
+        )
+        queue.add(jsonObjectGet)
     }
 
     fun rotateCanvas(canvas: Canvas?){
@@ -195,16 +285,6 @@ class Game(context: Context?) : SurfaceView(context), SurfaceHolder.Callback{
         var angleInDeg = angleInRads * 57
 
         canvas!!.rotate(angleInDeg.toFloat())
-    }
-
-    fun restartGame(){
-        var handler = Handler()
-        handler.postDelayed({
-            //Update para os status do player caso ele esteja logado
-            val intent = Intent(context, GameActivity::class.java)
-            startActivity(intent)
-            activity?.finish()
-        }, 5000)
     }
 
     fun pause(){
