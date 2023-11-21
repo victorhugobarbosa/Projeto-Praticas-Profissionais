@@ -5,8 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.os.Handler
-import android.os.Looper
 import android.util.DisplayMetrics
 import android.view.MotionEvent
 import android.view.SurfaceHolder
@@ -16,6 +14,7 @@ import androidx.core.content.ContextCompat
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
+import com.example.cotucatdpd.activity.MainActivity
 import com.example.cotucatdpd.gameObject.*
 import com.example.cotucatdpd.gamePanel.*
 import com.example.cotucatdpd.graphics.*
@@ -71,19 +70,25 @@ class Game(context: Context?, nome: String) : SurfaceView(context), SurfaceHolde
 
         isFocusable = true
 
-        val queue = Volley.newRequestQueue(context)
-        val url = "http://192.168.180.71:3000/players/$nome"
+        if(nome != "no-name") {
+            val queue = Volley.newRequestQueue(context)
+            val url = "http://192.168.180.71:3000/players/$nome"
 
-        val jsonObjectGet = JsonObjectRequest(
-            Request.Method.GET, url, null,
-            { response ->
-                player.updatePoints(response.getInt("pontos"))
-            },
-            { error ->
-                Toast.makeText(context, "Erro ao puxar pontos:"+error.message, Toast.LENGTH_SHORT).show()
-            }
-        )
-        queue.add(jsonObjectGet)
+            val jsonObjectGet = JsonObjectRequest(
+                Request.Method.GET, url, null,
+                { response ->
+                    player.updatePoints(response.getInt("pontos"))
+                },
+                { error ->
+                    Toast.makeText(
+                        context,
+                        "Erro ao puxar pontos:" + error.message,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            )
+            queue.add(jsonObjectGet)
+        }
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -155,7 +160,8 @@ class Game(context: Context?, nome: String) : SurfaceView(context), SurfaceHolde
         tilemap.draw(canvas, gameDisplay);
 
         joystick.draw(canvas)
-        player.draw(canvas, gameDisplay!!)
+        drawPoints(canvas)
+
         for(e in enemyList){
             e.draw(canvas, gameDisplay!!)
         }
@@ -166,8 +172,9 @@ class Game(context: Context?, nome: String) : SurfaceView(context), SurfaceHolde
         if(player.getHealthPoints() <= 0){
             gameOver!!.draw(canvas)
         }
-        drawPoints(canvas)
+
         rotateCanvas(canvas)
+        player.draw(canvas, gameDisplay!!)
     }
 
     var updating = false
@@ -286,7 +293,9 @@ class Game(context: Context?, nome: String) : SurfaceView(context), SurfaceHolde
         var angleInRads = Math.atan2(joystick.getActuatorY()!!, joystick.getActuatorX()!!)
         var angleInDeg = angleInRads * 57
 
-        canvas!!.rotate(angleInDeg.toFloat())
+        canvas!!.rotate(angleInDeg.toFloat(), (display.width / 2).toFloat(),
+            (display.height / 2).toFloat()
+        )
     }
 
     fun pause(){
