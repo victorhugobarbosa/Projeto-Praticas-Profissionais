@@ -35,7 +35,17 @@ class Enemy(context: Context?, player: Player, animator: Animator) :
 
     override fun draw(canvas: Canvas?, gameDisplay: GameDisplay) {
         //super.draw(canvas, gameDisplay)
-        animator.draw(canvas, gameDisplay, this)
+        var distanceX = player.getPositionX() - positionX
+        var distanceY = player.getPositionY() - positionY
+
+        if(distanceX < 0 && distanceX < distanceY)
+            animator.draw(canvas, gameDisplay, this, 4)
+        else if(distanceX > 0 && distanceX > distanceY)
+            animator.draw(canvas, gameDisplay, this, 2)
+        else if(distanceY < 0 && distanceX > distanceY)
+            animator.draw(canvas, gameDisplay, this, 1)
+        else if(distanceY > 0 && distanceX < distanceY)
+            animator.draw(canvas, gameDisplay, this, 3)
     }
 
     fun getInimigoState() : InimigoState {

@@ -293,7 +293,8 @@ class Game(context: Context?, nome: String) : SurfaceView(context), SurfaceHolde
         var angleInRads = Math.atan2(joystick.getActuatorY()!!, joystick.getActuatorX()!!)
         var angleInDeg = angleInRads * 57
 
-        canvas!!.rotate(angleInDeg.toFloat(), (display.width / 2).toFloat(),
+        canvas!!.rotate(
+            angleInDeg.toFloat(), (display.width / 2).toFloat(),
             (display.height / 2).toFloat()
         )
     }
