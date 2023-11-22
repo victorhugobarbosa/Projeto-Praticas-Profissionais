@@ -6,14 +6,17 @@ import androidx.core.content.ContextCompat
 import com.example.cotucatdpd.GameDisplay
 import com.example.cotucatdpd.GameLoop
 import com.example.cotucatdpd.R
+import com.example.cotucatdpd.graphics.Animator
 
-class Enemy(context: Context?, player: Player) :
+class Enemy(context: Context?, player: Player, animator: Animator) :
     Circle(ContextCompat.getColor(context!!, R.color.enemy),
         Math.random()*1000, Math.random()*1000, 20.0) {
 
     private var player = player
     private val SPEED_PIXELS_PER_SECOND = player.SPEED_PIXELS_PER_SECOND*0.5
     private val MAX_SPEED = SPEED_PIXELS_PER_SECOND / GameLoop.MAX_UPS
+    private var animator = animator
+    private var inimigoState = InimigoState(this)
 
     private val SPAWNS_PER_MINUTE = 20
     private val SPAWNS_PER_SECOND = SPAWNS_PER_MINUTE/60.0
@@ -31,7 +34,22 @@ class Enemy(context: Context?, player: Player) :
     }
 
     override fun draw(canvas: Canvas?, gameDisplay: GameDisplay) {
-        super.draw(canvas, gameDisplay)
+        //super.draw(canvas, gameDisplay)
+        var distanceX = player.getPositionX() - positionX
+        var distanceY = player.getPositionY() - positionY
+
+        if(distanceX < 0 && distanceX < distanceY)
+            animator.draw(canvas, gameDisplay, this, 4)
+        else if(distanceX > 0 && distanceX > distanceY)
+            animator.draw(canvas, gameDisplay, this, 2)
+        else if(distanceY < 0 && distanceX > distanceY)
+            animator.draw(canvas, gameDisplay, this, 1)
+        else if(distanceY > 0 && distanceX < distanceY)
+            animator.draw(canvas, gameDisplay, this, 3)
+    }
+
+    fun getInimigoState() : InimigoState {
+        return inimigoState
     }
 
     override fun update() {

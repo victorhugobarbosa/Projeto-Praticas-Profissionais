@@ -1,4 +1,4 @@
-package com.example.cotucatdpd
+package com.example.cotucatdpd.activity
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -7,10 +7,10 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.EditText
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
+import com.example.cotucatdpd.R
 
 class Login : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

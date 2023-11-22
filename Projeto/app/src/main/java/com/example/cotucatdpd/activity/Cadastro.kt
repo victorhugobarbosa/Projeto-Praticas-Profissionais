@@ -1,4 +1,4 @@
-package com.example.cotucatdpd
+package com.example.cotucatdpd.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -11,6 +11,7 @@ import com.android.volley.Request
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
+import com.example.cotucatdpd.R
 import org.json.JSONObject
 
 

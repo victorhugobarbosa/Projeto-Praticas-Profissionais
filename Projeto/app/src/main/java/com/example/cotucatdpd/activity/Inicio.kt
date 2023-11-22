@@ -1,10 +1,11 @@
-package com.example.cotucatdpd
+package com.example.cotucatdpd.activity
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
+import com.example.cotucatdpd.R
 
 class Inicio : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

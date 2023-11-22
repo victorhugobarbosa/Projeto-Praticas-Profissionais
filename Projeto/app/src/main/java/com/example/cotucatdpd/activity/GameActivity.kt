@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 
 class GameActivity : Activity() {
     lateinit var game: Game

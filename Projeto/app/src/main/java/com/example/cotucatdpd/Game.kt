@@ -5,8 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.os.Handler
-import android.os.Looper
 import android.util.DisplayMetrics
 import android.view.MotionEvent
 import android.view.SurfaceHolder
@@ -16,6 +14,7 @@ import androidx.core.content.ContextCompat
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
+import com.example.cotucatdpd.activity.MainActivity
 import com.example.cotucatdpd.gameObject.*
 import com.example.cotucatdpd.gamePanel.*
 import com.example.cotucatdpd.graphics.*
@@ -38,6 +37,7 @@ class Game(context: Context?, nome: String) : SurfaceView(context), SurfaceHolde
     private var gameOver: GameOver?
     private var gameDisplay: GameDisplay
     private var nome = nome
+    private var animatorInimigo : Animator
     //private var spriteSheet = SpriteSheet(context)
 
     init {
@@ -58,7 +58,8 @@ class Game(context: Context?, nome: String) : SurfaceView(context), SurfaceHolde
         val spriteSheet = SpriteSheet(context)
         val animator = Animator(spriteSheet.getPlayerSpriteArray())
         player = Player(getContext(), 4000.0, 4000.0, 30.0, joystick, animator)
-        enemy = Enemy(getContext(), player)
+        animatorInimigo = Animator(spriteSheet.getInimigosSpriteArray())
+        enemy = Enemy(getContext(), player, animatorInimigo)
         //enemy = Enemy(getContext(), player, 0.0, 0.0, 20.0)
 
         gameDisplay = GameDisplay(displayMetrics.widthPixels, displayMetrics.heightPixels, player)
@@ -69,19 +70,25 @@ class Game(context: Context?, nome: String) : SurfaceView(context), SurfaceHolde
 
         isFocusable = true
 
-        val queue = Volley.newRequestQueue(context)
-        val url = "http://192.168.180.71:3000/players/$nome"
+        if(nome != "no-name") {
+            val queue = Volley.newRequestQueue(context)
+            val url = "http://192.168.180.71:3000/players/$nome"
 
-        val jsonObjectGet = JsonObjectRequest(
-            Request.Method.GET, url, null,
-            { response ->
-                player.updatePoints(response.getInt("pontos"))
-            },
-            { error ->
-                Toast.makeText(context, "Erro ao puxar pontos:"+error.message, Toast.LENGTH_SHORT).show()
-            }
-        )
-        queue.add(jsonObjectGet)
+            val jsonObjectGet = JsonObjectRequest(
+                Request.Method.GET, url, null,
+                { response ->
+                    player.updatePoints(response.getInt("pontos"))
+                },
+                { error ->
+                    Toast.makeText(
+                        context,
+                        "Erro ao puxar pontos:" + error.message,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            )
+            queue.add(jsonObjectGet)
+        }
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -153,7 +160,8 @@ class Game(context: Context?, nome: String) : SurfaceView(context), SurfaceHolde
         tilemap.draw(canvas, gameDisplay);
 
         joystick.draw(canvas)
-        player.draw(canvas, gameDisplay!!)
+        drawPoints(canvas)
+
         for(e in enemyList){
             e.draw(canvas, gameDisplay!!)
         }
@@ -164,8 +172,9 @@ class Game(context: Context?, nome: String) : SurfaceView(context), SurfaceHolde
         if(player.getHealthPoints() <= 0){
             gameOver!!.draw(canvas)
         }
-        drawPoints(canvas)
+
         rotateCanvas(canvas)
+        player.draw(canvas, gameDisplay!!)
     }
 
     var updating = false
@@ -191,7 +200,7 @@ class Game(context: Context?, nome: String) : SurfaceView(context), SurfaceHolde
         // Spawn enemy
         if (enemy!!.readyToSpawn()) {
             enemyList.add(enemy!!)
-            enemy = Enemy(getContext(), player)
+            enemy = Enemy(getContext(), player, animatorInimigo)
         }
         while(numberOfSpellsToCast > 0){
             spellList.add(Spell(context, player))
@@ -206,7 +215,7 @@ class Game(context: Context?, nome: String) : SurfaceView(context), SurfaceHolde
         }
 
         var iteratorE = enemyList.iterator()
-        var e = Enemy(context, player)
+        var e = Enemy(context, player, animatorInimigo)
         while(iteratorE.hasNext()){
             var enemy = iteratorE.next()
             if(e.isColliding(enemy, player)){
@@ -284,7 +293,10 @@ class Game(context: Context?, nome: String) : SurfaceView(context), SurfaceHolde
         var angleInRads = Math.atan2(joystick.getActuatorY()!!, joystick.getActuatorX()!!)
         var angleInDeg = angleInRads * 57
 
-        canvas!!.rotate(angleInDeg.toFloat())
+        canvas!!.rotate(
+            angleInDeg.toFloat(), (display.width / 2).toFloat(),
+            (display.height / 2).toFloat()
+        )
     }
 
     fun pause(){

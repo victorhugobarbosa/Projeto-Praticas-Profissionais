@@ -1,4 +1,4 @@
-package com.example.cotucatdpd;
+package com.example.cotucatdpd.activity;
 
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment;
+import com.example.cotucatdpd.GameActivity
 import com.example.cotucatdpd.databinding.FragmentSecondBinding
 
 class SecondFragment : Fragment() {

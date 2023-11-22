@@ -1,5 +1,6 @@
-package com.example.cotucatdpd;
+package com.example.cotucatdpd.activity;
 
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -34,6 +35,12 @@ class FirstFragment : Fragment() {
 
         binding.startGameButton2.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+        }
+
+        binding.btnLeader.setOnClickListener {
+            val intent = Intent(context, LeaderboardActivity::class.java)
+            startActivity(intent)
+            activity?.finish()
         }
     }
 
