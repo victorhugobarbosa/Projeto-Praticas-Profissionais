@@ -6,14 +6,14 @@ const porta = 3000;
 const app = express();
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDOD29wdZR_sizdl61KASPgHckL9vDpOkA",
-    authDomain: "api-praticas3.firebaseapp.com",
-    projectId: "api-praticas3",
-    storageBucket: "api-praticas3.appspot.com",
-    messagingSenderId: "20720358920",
-    appId: "1:20720358920:web:18deaa42698ee5982f63bd",
-    measurementId: "G-6LLERQTR8X"
-}; 
+    apiKey: "AIzaSyBa22asjbEuIPKUcbbXucHBCRTcGRYo96c",
+    authDomain: "api-praticas3-4820a.firebaseapp.com",
+    projectId: "api-praticas3-4820a",
+    storageBucket: "api-praticas3-4820a.appspot.com",
+    messagingSenderId: "1016608215182",
+    appId: "1:1016608215182:web:ef3453b0aca752a92679df",
+    measurementId: "G-KBMG2EX813"
+  };
 
 const firebase = initializeApp(firebaseConfig);
 const db = getFirestore(firebase);
