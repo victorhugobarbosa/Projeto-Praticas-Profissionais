@@ -6,12 +6,24 @@
     android:layout_height="match_parent">
 
     <TextView
+<<<<<<< Updated upstream
         android:id="@+id/textViewLeaderboard"
         android:layout_width="289dp"
         android:layout_height="557dp"
         android:text="TextView"
         app:layout_constraintBottom_toBottomOf="parent"
+=======
+        android:id="@+id/txtLeaderboard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="44dp"
+        android:text="TextView"
+>>>>>>> Stashed changes
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 </androidx.constraintlayout.widget.ConstraintLayout>

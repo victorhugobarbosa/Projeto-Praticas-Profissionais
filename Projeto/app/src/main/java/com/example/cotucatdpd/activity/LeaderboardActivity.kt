@@ -8,11 +8,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.example.cotucatdpd.R
+import com.example.cotucatdpd.graphics.Sprite
 
 class LeaderboardActivity : AppCompatActivity() {
 
@@ -29,36 +31,65 @@ class LeaderboardActivity : AppCompatActivity() {
 
         var txtRank = findViewById<TextView>(R.id.txtLeaderboard)
 
-        findViewById<ImageView>(R.id.btnVoltar).setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-        }
-
         val queue = Volley.newRequestQueue(this)
-        val url = "http://192.168.180.71:3000/players"
+        val url = "http://192.168.11.101:3000/players"
 
         val jsonArrayRequest = JsonArrayRequest(
             Request.Method.GET, url, null,
             { response ->
                 try {
-                    val users = StringBuilder()
+                    val users = arrayOfNulls<String>(50)
+                    val points = arrayOfNulls<Int>(50)
 
                     for (i in 0 until response.length()) {
-                        val jsonObject = response.getJSONObject(i)
-                        val name = jsonObject.getString("nome")
+                        if(i >= 49)
+                            break;
 
-                        users.append("$name\n")
+                        val jsonObject = response.getJSONObject(i)
+                        val name = jsonObject.getString("nickname")
+                        val pontos = jsonObject.getInt("pontos")
+
+                        users[i] = name
+                        points[i] = pontos
                     }
 
-                    txtRank.text = users.toString()
+                    txtRank.text = ordenarPorPontos(users, points)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
             },
             { error ->
-                Toast.makeText(applicationContext, "Error to pull name: ${error.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
             }
         )
         queue.add(jsonArrayRequest)
+
+        findViewById<ImageView>(R.id.btnVoltar).setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
+    fun ordenarPorPontos(users: Array<String?>, points: Array<Int?>) : String{
+        val ordenado = StringBuilder()
+        for(i in 0 until users.size){
+            if(points[i] == null)
+                break
+            for(j in 1 until users.size){
+                if(points[j] == null)
+                    break
+                if(points[j]!! > points[i]!!){
+                    var backup = points[i]
+                    points[i] = points[j]
+                    points[j] = backup
+
+                    var backup2 = users[i]
+                    users[i] = users[j]
+                    users[j] = backup2
+                }
+            }
+            ordenado.append("${users[i]}: ${points[i]}\n")
+        }
+        return ordenado.toString()
     }
 }

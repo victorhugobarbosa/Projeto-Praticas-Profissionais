@@ -72,7 +72,7 @@ class Game(context: Context?, nome: String) : SurfaceView(context), SurfaceHolde
 
         if(nome != "no-name") {
             val queue = Volley.newRequestQueue(context)
-            val url = "http://192.168.180.71:3000/players/$nome"
+            val url = "http://192.168.11.101:3000/players/$nome"
 
             val jsonObjectGet = JsonObjectRequest(
                 Request.Method.GET, url, null,
@@ -255,7 +255,7 @@ class Game(context: Context?, nome: String) : SurfaceView(context), SurfaceHolde
 
     fun updatePoints(nickname: String){
         val queue = Volley.newRequestQueue(context)
-        val url = "http://192.168.180.71:3000/players/$nickname"
+        val url = "http://192.168.11.101:3000/players/$nickname"
 
         var email = ""
         var senha = ""
