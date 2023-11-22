@@ -37,7 +37,7 @@ class FirstFragment : Fragment() {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
         }
 
-        binding.btnLeader.setOnClickListener {
+        binding.btnLeaderboard.setOnClickListener {
             val intent = Intent(context, LeaderboardActivity::class.java)
             startActivity(intent)
             activity?.finish()

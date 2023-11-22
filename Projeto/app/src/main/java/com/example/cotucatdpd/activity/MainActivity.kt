@@ -1,4 +1,4 @@
-package com.example.cotucatdpd
+package com.example.cotucatdpd.activity
 
 import android.content.Intent
 import android.os.Bundle

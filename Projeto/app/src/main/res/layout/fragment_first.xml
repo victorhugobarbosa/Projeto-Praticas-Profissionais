@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/ctc_background"
-    tools:context=".FirstFragment">
+    tools:context=".activity.FirstFragment">
 
     <TextView
         android:id="@+id/textView3"
@@ -63,9 +63,9 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:backgroundTint="#5d00ff"
         android:onClick="leaderboardPage"
         android:text="Leaderboard"
+        android:backgroundTint="#FA2515"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.972"
